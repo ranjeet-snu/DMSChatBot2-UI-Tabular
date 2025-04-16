@@ -1,0 +1,102 @@
+<template>
+    <!-- Toggle Button -->
+    <div class="chat-toggle-button" onclick={toggleChat}>
+        <lightning-icon icon-name="utility:chat" size="large"></lightning-icon>
+    </div>
+
+    <!-- Chat Container -->
+    <div class={chatContainerClass}>
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <img src={chatbotLogo} class="chatbot-logo" alt="Chatbot Logo"/>
+            <h2>Chatbot</h2>
+            <div class="header-actions">
+                    <lightning-button-icon 
+        variant="border-inverse"
+        icon-name={fullscreenIcon}
+        alternative-text="Toggle Fullscreen"
+        onclick={toggleFullscreen}
+        class="fullscreen-btn">
+    </lightning-button-icon>
+                <lightning-button-icon 
+                    variant="border-inverse"
+                    icon-name="utility:close" 
+                    alternative-text="Close"
+                    onclick={toggleChat}>
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" ref="messagesContainer">
+            <template for:each={messages} for:item="msg">
+                <div key={msg.id} class={msg.containerClass}>
+                    <img src={msg.avatar} 
+                         class="message-avatar"
+                         alt={msg.senderAlt}/>
+                    <div class={msg.bubbleClass}>
+                        <div class="message-content">
+                            <template if:true={msg.isHtml}>
+                                <div lwc:dom="manual" class="html-message" data-id={msg.id}></div>
+                            </template>
+                            <template if:false={msg.isHtml}>
+                                {msg.text}
+                            </template>
+                        </div>
+                        
+                        <div class="message-time">{msg.timestamp}</div>
+                    </div>
+                </div>
+            </template>
+
+            <div if:true={isBotTyping} class="typing-indicator">
+                <img src={botAvatar} class="message-avatar" alt="Assistant"/>
+                <div class="typing-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Replies -->
+        <div class="quick-replies-container" if:true={showQuickReplies}>
+            <div class="quick-replies-scroller">
+                <template for:each={quickReplies} for:item="reply">
+                    <lightning-button 
+                        key={reply.id} 
+                        label={reply.text}
+                        class="quick-reply-btn"
+                        onclick={handleQuickReply}>
+                    </lightning-button>
+                </template>
+            </div>
+        </div>
+
+        <!-- Cart Summary -->
+        <div class="cart-summary" if:true={cart}>
+            <p><strong>🛒 Cart Summary:</strong></p>
+            <p>Product: {cart.productName}</p>
+            <p>Quantity: {cart.quantity}</p>
+            <p>Total: ₹{cart.total}</p>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input">
+            <lightning-input 
+                type="text" 
+                value={inputText} 
+                onchange={handleInput}
+                onkeypress={handleKeyPress}
+                placeholder="Type your message..."
+                variant="label-hidden">
+            </lightning-input>
+            <lightning-button-icon 
+                icon-name="utility:send" 
+                alternative-text="Send"
+                onclick={handleSend}
+                class="send-btn">
+            </lightning-button-icon>
+        </div>
+    </div>
+</template>
